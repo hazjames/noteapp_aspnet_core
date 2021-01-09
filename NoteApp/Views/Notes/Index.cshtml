@@ -1,0 +1,62 @@
+@model IEnumerable<NoteApp.Models.Note>
+
+@{ ViewData["Title"] = "Notes"; }
+
+<h1>Index</h1>
+
+<form asp-controller="Notes" asp-action="Index" method="post">
+    <p>
+        Quick Add: <input type="text" name="Title" />
+        <input type="submit" value="Add" />
+        <a asp-action="Create">Advanced</a>
+    </p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comments)
+            </th>
+            @if (User.IsInRole("Admin") && (string)@ViewData["ViewAll"] == "all")
+            {
+<th>
+    Username
+</th>
+}
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Title)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Priority)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Comments)
+    </td>
+    @if (User.IsInRole("Admin") &&
+       ((string)@ViewData["ViewAll"] == "all" || (string)@TempData["ViewAll"] == "all"))
+    {
+<td>
+    @item.User.UserName
+</td>
+}
+    <td>
+        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+    </td>
+</tr>
+}
+    </tbody>
+</table>

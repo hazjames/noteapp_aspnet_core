@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<ApplicationUser>
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>List of Users</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Username
+            </th>
+            <th>
+                Roles
+            </th>
+            <th>
+                Locked
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @{
+                        foreach (var role in await UserManager.GetRolesAsync(item))
+                        {
+                            @role <br />
+                        }
+                    }
+                </td>
+                <td>
+                    @if (item.LockoutEnd > DateTime.Now)
+                    {
+                        <form asp-action="Index" method="post">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="hidden" name="DisableLockout" value="true" />
+                            <input type="submit" value="Unlock" />
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
